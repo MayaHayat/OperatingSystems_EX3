@@ -17,8 +17,9 @@ void* handle_keyboard(void *p_client_socket)
 
     while(1) {
         bzero(buffer, BUFFER_SIZE);
-        printf("Enter message:\n");
-        fflush(stdout);
+        printf(">> ");
+        printf("\n");
+        fflush(stdout); // shouldn't get to this, just in case!
         fgets(buffer, BUFFER_SIZE, stdin);
 
 
@@ -74,13 +75,13 @@ int main()
     char server_response[BUFFER_SIZE];
     while(1) {
         bzero(server_response, BUFFER_SIZE);
-        ssize_t bytes_received = recv(client_socket, server_response, BUFFER_SIZE, 0);
-        server_response[bytes_received] ='\0';
-        if (bytes_received == -1) {
+        ssize_t len = recv(client_socket, server_response, BUFFER_SIZE, 0);
+        server_response[len] ='\0';
+        if (len == -1) {
             perror("Didn't get server's response!");
 
             exit(1);
-        } else if (bytes_received == 0) {
+        } else if (len == 0) {
             printf("Lost connection, sorry\n");
             break;
         }

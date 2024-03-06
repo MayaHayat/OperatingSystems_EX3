@@ -19,7 +19,7 @@ int main(){
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket == -1){
         perror("Socket");
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
     struct sockaddr_in server_address;
@@ -30,20 +30,20 @@ int main(){
     if (bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address)) == -1){
         perror("Binding");
         close(server_socket);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
     if (listen(server_socket, 5) == -1){
         perror("Listening (error)");
         close(server_socket);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
     printf("Server is listening on 8080!\n");
     while (1)
     {
         int client_socket = accept(server_socket, NULL, NULL);
 
-        printf("Client %d entered the groupchat!\n", client_socket);
+        printf("Client %d joined the groupchat!\n", client_socket);
         fflush(stdout);
 
         proactor(client_socket);

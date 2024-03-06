@@ -34,8 +34,8 @@ void *handle_client(void *p_client_socket){
 
     while (1){
         bzero(message, BUFFER_SIZE);
-        ssize_t bytes_received = recv(client_socket, message, BUFFER_SIZE, 0);
-        if (bytes_received <= 0){
+        ssize_t len = recv(client_socket, message, BUFFER_SIZE, 0);
+        if (len <= 0){
             printf("Client %d left!\n", client_socket);
             pthread_mutex_lock(&mutex);
             for (int i = 0; i < num_clients; i++){
@@ -62,7 +62,7 @@ void *handle_client(void *p_client_socket){
             close(client_socket);
             pthread_exit(NULL);
         }
-        message[bytes_received - 1] = '\0';
+        message[len - 1] = '\0';
         printf("Client %d: %s\n", client_socket, message);
         fflush(stdout);
         forward(client_socket, message);
@@ -90,7 +90,7 @@ int main(){
     int server_socket = socket(AF_INET, SOCK_STREAM, 0);
     if (server_socket == -1){
         perror("Socket");
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
     struct sockaddr_in server_address;
@@ -101,20 +101,20 @@ int main(){
     if (bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address)) == -1){
         perror("Binding");
         close(server_socket);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
     if (listen(server_socket, 5) == -1){
         perror("Listening (error)");
         close(server_socket);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
     printf("Server is listening on 8080!\n");
     while (1)
     {
         int client_socket = accept(server_socket, NULL, NULL);
 
-        printf("Client %d added to the groupchat!\n", client_socket);
+        printf("Client %d joined the groupchat!\n", client_socket);
         fflush(stdout);
         pthread_t t;
         int *p_client_sock = malloc(sizeof(int));

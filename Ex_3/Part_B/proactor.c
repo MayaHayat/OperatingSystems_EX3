@@ -52,12 +52,14 @@ void *handle_client(void *p_client_socket){
 
     while (1){
         bzero(message, BUFFER_SIZE);
-        ssize_t bytes_received = recv(client_socket, message, BUFFER_SIZE, 0);
-        if (bytes_received <= 0)
+        ssize_t len = recv(client_socket, message, BUFFER_SIZE, 0);
+        if (len <= 0)
         {
             printf("Client %d left!\n", client_socket);
 
             pthread_mutex_lock(&mutex);
+
+            // Remove client from list
             for (int i = 0; i < num_clients; i++)
             {
                 if (clients[i] == client_socket)
@@ -83,7 +85,7 @@ void *handle_client(void *p_client_socket){
             close(client_socket);
             pthread_exit(NULL);
         }
-        message[bytes_received - 1] = '\0';
+        message[len - 1] = '\0';
         printf("Client %d: %s\n", client_socket, message);
         fflush(stdout);
         forward(client_socket, message);
