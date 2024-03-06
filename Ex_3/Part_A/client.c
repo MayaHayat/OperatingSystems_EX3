@@ -17,7 +17,7 @@ void* handle_keyboard(void *p_client_socket)
 
     while(1) {
         bzero(buffer, BUFFER_SIZE);
-        printf(">> ");
+        printf(">>");
         printf("\n");
         fflush(stdout); // shouldn't get to this, just in case!
         fgets(buffer, BUFFER_SIZE, stdin);
@@ -87,6 +87,8 @@ int main()
         }
         printf("%s\n", server_response);
         fflush(stdout);
+        printf(">>");
+        printf("\n");
     }
 
     // Cleanup
